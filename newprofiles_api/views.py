@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
 
 from newprofiles_api import serializers
 from newprofiles_api import models
@@ -33,7 +35,6 @@ class HelloApiView(APIView):
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
             message = f'Hello {name}'
-
             return Response({'message': message})
         else:
             return Response(
@@ -60,7 +61,6 @@ class HelloViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """Return a hello message"""
-
         a_viewset = [
             'Uses actions (list, create, retrieve, update, partial_update)',
             'Automatically maps to URLs using Routers',
@@ -76,7 +76,6 @@ class HelloViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
             message = f'Hello {name}!'
-
             return Response({'message': message})
         else:
             return Response(
@@ -86,22 +85,18 @@ class HelloViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handle getting an object by its ID"""
-
         return Response({'http_method': 'GET'})
 
     def update(self, request, pk=None):
         """Handle updating an object"""
-
         return Response({'http_method': 'PUT'})
 
     def partial_update(self, request, pk=None):
         """Handle updating part of an object"""
-
         return Response({'htttp_method': 'PATCH'})
 
     def destroy(self, request, pk=None):
         """Handle removing an object"""
-
         return Response({'http_method': 'DELETE'})
 
 
@@ -113,3 +108,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.UpdateOwnProfile, )
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name', 'email', )
+
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handle creating user authentication tokens"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
